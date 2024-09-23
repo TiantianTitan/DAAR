@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-// 函数声明
 void computeLTS(const char* pattern, int M, int* LTS);
 void computeCarryOver(const char* pattern, int M, int* LTS, int* CarryOver);
 
-// 计算 LTS 数组
 void computeLTS(const char* pattern, int M, int* LTS) {
-    LTS[0] = -1;  // 设定LTS[0]为-1
-    LTS[1] = 0;   // 处理 LTS[1]
+    LTS[0] = -1;  // LTS[0]固定为-1
+    LTS[1] = 0;   // LTS[1]固定为0
 
     int j = 0;    // 前缀长度
 
@@ -23,27 +21,24 @@ void computeLTS(const char* pattern, int M, int* LTS) {
     }
 }
 
-// 计算 CarryOver 数组
 void computeCarryOver(const char* pattern, int M, int* LTS, int* CarryOver) {
-    // 初始化 CarryOver 数组
+
     for (int i = 0; i < M; i++) {
         CarryOver[i] = LTS[i];
     }
     
-    // 根据规则调整 CarryOver 数组
     for (int i = 1; i < M; i++) {
         if (pattern[i] == pattern[CarryOver[i]] && CarryOver[CarryOver[i]] == -1) {
             CarryOver[i] = -1;
         } else if (pattern[i] == pattern[CarryOver[i]] && CarryOver[CarryOver[i]] != -1) {
             CarryOver[i] = LTS[LTS[i]];
         } 
-        // 如果前面的两个条件都不满足，CarryOver[i] 保持为 LTS[i]。
     }
 }
 
 int main() {
     const char* pattern = "mamamia";
-    int M = strlen(pattern) + 1;  // 模式串长度 + 1 因为 LTS[0] = -1
+    int M = strlen(pattern) + 1; 
 
     int LTS[M];
     int CarryOver[M];
