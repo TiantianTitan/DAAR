@@ -38,7 +38,7 @@ void computeCarryOver(const char* pattern, int M, int* LTS, int* CarryOver) {
 }
 
 
-void KMPSearchInLine(const char* text, const char* pattern, int lineNumber) {
+void KMPSearchInLine(const char* text, const char* pattern, int lineNumber, int *failCount) {
     int N = strlen(text);    
     int M = strlen(pattern); 
 
@@ -59,7 +59,7 @@ void KMPSearchInLine(const char* text, const char* pattern, int lineNumber) {
         }
 
         if (j == M) {
-            printf("We found the text at line %d, at position %d \n", lineNumber, i - j);
+            printf("We found the text %s at line %d, at position %d \n", pattern, lineNumber, i - j);
             found = 1;
             j = CarryOver[j];  // 继续寻找下一个匹配
         } else if (i < N && pattern[j] != text[i]) {
@@ -73,7 +73,7 @@ void KMPSearchInLine(const char* text, const char* pattern, int lineNumber) {
 
 
     if (!found) {
-        
+        (*failCount)++;
     }
 }
 
@@ -101,11 +101,54 @@ char** readTextFileByLines(const char* filename, int* lineCount) {
 int main() {
 
     int lineCount = 0;
-    const char* pattern = "Chihuahua";
+
+    int failCount1 = 0;
+    int failCount2 = 0;
+    int failCount3 = 0;
+    int failCount4 = 0;
+    int failCount5 = 0;
+
+    const char* pattern1 = "Chihuahua";
+    const char* pattern2 = "Pizzi";
+    const char* pattern3 = "Pepperoni";
+    const char* pattern4 = "Pizza";
+    const char* pattern5 = "Poppers";
+
     char** lines = readTextFileByLines("41011-0.txt", &lineCount);
+
     
+    printf("The Text1 is %s\n", pattern1);
+    printf("The Text2 is %s\n", pattern2);
+    printf("The Text3 is %s\n", pattern3);
+    printf("The Text4 is %s\n", pattern4);
+    printf("The Text5 is %s\n", pattern5);
+
     for (int i = 0; i < lineCount; i++) {
-        KMPSearchInLine(lines[i], pattern, i + 1);
+
+        KMPSearchInLine(lines[i], pattern1, i + 1, &failCount1);
+        if (failCount1 == lineCount) 
+            printf("404 Text Not Found! \n");
+
+
+        KMPSearchInLine(lines[i], pattern2, i + 1, &failCount2);
+        if (failCount2 == lineCount) 
+            printf("404 Text2 Not Found! \n");
+
+    
+        KMPSearchInLine(lines[i], pattern3, i + 1, &failCount3);
+        if (failCount3 == lineCount) 
+            printf("404 Text3 Not Found! \n");
+
+
+        KMPSearchInLine(lines[i], pattern4, i + 1, &failCount4);
+        if (failCount4 == lineCount) 
+            printf("404 Text4 Not Found! \n");
+
+
+        KMPSearchInLine(lines[i], pattern5, i + 1, &failCount5);
+        if (failCount5 == lineCount - 1) 
+            printf("404 Text5 Not Found! \n");
+        
         free(lines[i]); 
     }
 
