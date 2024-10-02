@@ -102,7 +102,35 @@ char** readTextFileByLines(const char* filename, int* lineCount) {
 }
 
 
+typedef struct {
+    char** lines;
+    int lineCount;
+    const char* pattern;
+    int* failCount;
+    sem_t* previous_sem;
+    sem_t* current_sem;
+} ThreadData;
 
+void* searchInThread(void* arg) {
+    ThreadData* data = (ThreadData*)arg;
+
+    sem_wait(data->previous_sem);  // 等待前一个线程完成
+
+    // 在每个线程开始时打印对应的 pattern
+    printf("Now searching for pattern: %s\n", data->pattern);
+
+    for (int i = 0; i < data->lineCount; i++) {
+        KMPSearchInLine(data->lines[i], data->pattern, i + 1, data->failCount);
+        if (*(data->failCount) == data->lineCount) {
+            printf("404 Text Not Found for pattern: %s\n", data->pattern);
+        }
+    }
+
+    printf("\n\n");
+    sem_post(data->current_sem);  // 通知下一个线程
+
+    return NULL;
+}
 
 
 int main() {
@@ -123,40 +151,41 @@ int main() {
 
     char** lines = readTextFileByLines("41011-0.txt", &lineCount);
 
-    
-    printf("The Text1 is %s\n", pattern1);
-    printf("The Text2 is %s\n", pattern2);
-    printf("The Text3 is %s\n", pattern3);
-    printf("The Text4 is %s\n", pattern4);
-    printf("The Text5 is %s\n", pattern5);
+    pthread_t threads[5];
+    sem_t semaphores[6];
+
+    for (int i = 0; i < 6; i++) {
+        sem_init(&semaphores[i], 0, 0);  // 初始化信号量
+    }
+
+    // 第一个信号量设置为1，启动第一个线程
+    sem_post(&semaphores[0]);
+
+    ThreadData threadData[5] = {
+        {lines, lineCount, pattern1, &failCount1, &semaphores[0], &semaphores[1]},
+        {lines, lineCount, pattern2, &failCount2, &semaphores[1], &semaphores[2]},
+        {lines, lineCount, pattern3, &failCount3, &semaphores[2], &semaphores[3]},
+        {lines, lineCount, pattern4, &failCount4, &semaphores[3], &semaphores[4]},
+        {lines, lineCount, pattern5, &failCount5, &semaphores[4], &semaphores[5]},
+    };
+
+    // 创建线程
+    for (int i = 0; i < 5; i++) {
+        pthread_create(&threads[i], NULL, searchInThread, &threadData[i]);
+    }
+
+    // 等待所有线程完成
+    for (int i = 0; i < 5; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    // 清理资源
+    for (int i = 0; i < 6; i++) {
+        sem_destroy(&semaphores[i]);
+    }
 
     for (int i = 0; i < lineCount; i++) {
-
-        KMPSearchInLine(lines[i], pattern1, i + 1, &failCount1);
-        if (failCount1 == lineCount) 
-            printf("404 Text Not Found! \n");
-
-
-        KMPSearchInLine(lines[i], pattern2, i + 1, &failCount2);
-        if (failCount2 == lineCount) 
-            printf("404 Text2 Not Found! \n");
-
-    
-        KMPSearchInLine(lines[i], pattern3, i + 1, &failCount3);
-        if (failCount3 == lineCount) 
-            printf("404 Text3 Not Found! \n");
-
-
-        KMPSearchInLine(lines[i], pattern4, i + 1, &failCount4);
-        if (failCount4 == lineCount) 
-            printf("404 Text4 Not Found! \n");
-
-
-        KMPSearchInLine(lines[i], pattern5, i + 1, &failCount5);
-        if (failCount5 == lineCount) 
-            printf("404 Text5 Not Found! \n");
-        
-        free(lines[i]); 
+        free(lines[i]);
     }
 
     return 0;
