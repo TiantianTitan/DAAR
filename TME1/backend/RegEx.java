@@ -2,7 +2,6 @@ package TME1.backend;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-import java.lang.Exception;
 
 public class RegEx {
   //MACROS
