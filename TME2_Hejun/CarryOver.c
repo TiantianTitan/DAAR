@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+
 
 void computeLTS(const char* pattern, int M, int* LTS);
 void computeCarryOver(const char* pattern, int M, int* LTS, int* CarryOver);
@@ -98,6 +101,10 @@ char** readTextFileByLines(const char* filename, int* lineCount) {
     return lines;
 }
 
+
+
+
+
 int main() {
 
     int lineCount = 0;
@@ -146,7 +153,7 @@ int main() {
 
 
         KMPSearchInLine(lines[i], pattern5, i + 1, &failCount5);
-        if (failCount5 == lineCount - 1) 
+        if (failCount5 == lineCount) 
             printf("404 Text5 Not Found! \n");
         
         free(lines[i]); 
