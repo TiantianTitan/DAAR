@@ -62,7 +62,8 @@ void KMPSearchInLine(const char* text, const char* pattern, int lineNumber, int 
         }
 
         if (j == M) {
-            printf("We found the text %s at line %d, at position %d \n", pattern, lineNumber, i - j);
+            // 发现匹配，打印所在行和行的内容
+            printf("Line %d: %s", lineNumber, text);
             found = 1;
             j = CarryOver[j];  // 继续寻找下一个匹配
         } else if (i < N && pattern[j] != text[i]) {
@@ -73,7 +74,6 @@ void KMPSearchInLine(const char* text, const char* pattern, int lineNumber, int 
             }
         }
     }
-
 
     if (!found) {
         (*failCount)++;
