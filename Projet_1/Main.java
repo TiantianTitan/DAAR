@@ -31,8 +31,12 @@ public class Main {
                     System.out.println("Please enter the filename : ");
                     String filename = sc.nextLine();
                     patterns[1] = filename;
-                
+                    long t1 = System.currentTimeMillis();
                     EgrepClone.main(patterns);
+                    long t2 = System.currentTimeMillis();
+                    System.out.print("Time Used :" );
+                    System.out.print(t2-t1);
+                    System.out.println("ms");
                     System.out.println("\n");
                 }   
 
@@ -50,7 +54,13 @@ public class Main {
                     System.out.println("Please enter the filename : ");
                     String filename = sc.nextLine();
                     patterns[0] = filename;
+                    long t1 = System.currentTimeMillis();
                     KMPPatternSearch.main(patterns);
+                    long t2 = System.currentTimeMillis();
+                    System.out.print("Time Used :" );
+                    System.out.print(t2-t1);
+                    System.out.println("ms");
+                    System.out.println("\n");
                     System.out.println("\n");
                 }
 

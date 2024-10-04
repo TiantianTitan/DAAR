@@ -70,7 +70,7 @@ public class KMPPatternSearch {
     
             if (j == M) {
                 // 打印找到的模式位置及所在行的文本
-                System.out.printf("Line %d: \"%s\" \n",lineNumber, text);
+                System.out.printf("Line %d: %s \n",lineNumber, text);
                 found = true;
                 j = CarryOver[j];
             }
@@ -134,7 +134,7 @@ public class KMPPatternSearch {
                     System.out.println("404 Text Not Found for pattern: " + data.pattern);
                 }
 
-                System.out.println("\n\n");
+                
                 data.currentSem.release();  // 通知下一个线程
             } catch (InterruptedException e) {
                 e.printStackTrace();
