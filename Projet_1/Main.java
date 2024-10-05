@@ -64,7 +64,12 @@ public class Main {
                     System.out.println("\n");
                 }
 
-            case 3 -> System.exit(0);
+            case 3 ->{
+                sc.close();
+                System.exit(0);
+            } 
+                
+                
             }
         }
     }
