@@ -22,7 +22,7 @@ public class Main {
             sc.skip("\n");
         
             switch (choice) {
-                case 1 : {
+                case 1 -> {
                     String[] patterns = new String[2];
 
                     System.out.println("Please enter the Regex :");
@@ -40,7 +40,7 @@ public class Main {
                     System.out.println("\n");
                 }   
 
-                case 2 : {
+                case 2 -> {
                     System.out.println("Please enter the number of text : ");
                     int number = sc.nextInt();
                     sc.skip("\n");
@@ -64,7 +64,7 @@ public class Main {
                     System.out.println("\n");
                 }
 
-            case 3 : System.exit(0);
+            case 3 -> System.exit(0);
             }
         }
     }
