@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.2.8)  5 OCT 2024 22:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.2.8)  6 OCT 2024 10:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -421,7 +421,7 @@ Here is how much of TeX's memory you used:
  36 hyphenation exceptions out of 8191
  75i,18n,76p,676b,612s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><d:/TexLive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb>
-Output written on report.pdf (6 pages, 156892 bytes).
+Output written on report.pdf (6 pages, 156688 bytes).
 PDF statistics:
  178 PDF objects out of 1000 (max. 8388607)
  146 compressed objects within 2 object streams
