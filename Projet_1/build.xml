@@ -1,0 +1,35 @@
+<project name="Projet_1" default="run" basedir=".">
+    
+    <!-- 定义目录 -->
+    <property name="src.dir" value="."/>
+    <property name="build.dir" value="build"/>
+
+    <!-- 清理目标 -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!-- 编译目标 -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    </target>
+
+    <!-- 创建 JAR 文件 -->
+    <target name="jar" depends="compile">
+        <mkdir dir="${build.dir}/jar"/>
+        <jar destfile="${build.dir}/jar/Projet_1.jar" basedir="${build.dir}">
+            <manifest>
+                <!-- 包含包名 -->
+                <attribute name="Main-Class" value="Projet_1.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- 运行目标 -->
+    <target name="run" depends="jar">
+        <java jar="${build.dir}/jar/Projet_1.jar" fork="true"/>
+    </target>
+
+</project>
+
