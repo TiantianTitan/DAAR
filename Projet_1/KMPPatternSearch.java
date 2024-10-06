@@ -2,7 +2,6 @@ package Projet_1;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class KMPPatternSearch {
@@ -72,7 +71,8 @@ public class KMPPatternSearch {
                 // 打印找到的模式位置及所在行的文本
                 System.out.printf("Line %d: %s \n",lineNumber, text);
                 found = true;
-                j = CarryOver[j];
+                j = 0;
+                break;
             }
         }
     
@@ -100,15 +100,13 @@ public class KMPPatternSearch {
         List<String> lines;
         String pattern;
         AtomicInteger failCount;
-        Semaphore previousSem;
-        Semaphore currentSem;
+        AtomicInteger currentIndex;
 
-        public ThreadData(List<String> lines, String pattern, AtomicInteger failCount, Semaphore previousSem, Semaphore currentSem) {
+        public ThreadData(List<String> lines, String pattern, AtomicInteger failCount, AtomicInteger currentIndex) {
             this.lines = lines;
             this.pattern = pattern;
             this.failCount = failCount;
-            this.previousSem = previousSem;
-            this.currentSem = currentSem;
+            this.currentIndex = currentIndex;
         }
     }
 
@@ -121,69 +119,43 @@ public class KMPPatternSearch {
 
         @Override
         public void run() {
-            try {
-                data.previousSem.acquire();  // 等待前一个线程完成
-
-                // 在每个线程开始时打印对应的 pattern
-                System.out.println("Now searching for pattern: " + data.pattern);
-
-                for (int i = 0; i < data.lines.size(); i++) {
-                    KMPSearchInLine(data.lines.get(i), data.pattern, i + 1, data.failCount);
-                }
-                if (data.failCount.get() == data.lines.size()) {
-                    System.out.println("404 Text Not Found for pattern: " + data.pattern);
-                }
-
-                
-                data.currentSem.release();  // 通知下一个线程
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            int lineIndex;
+            while ((lineIndex = data.currentIndex.getAndIncrement()) < data.lines.size()) {
+                KMPSearchInLine(data.lines.get(lineIndex), data.pattern, lineIndex + 1, data.failCount);
             }
         }
     }
 
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.out.println("Usage: java KMPPatternSearch <filename> <pattern1> <pattern2> ... <patternN>");
+            System.out.println("Usage: java KMPPatternSearch <filename> <pattern>");
             return;
         }
 
         String filename = args[0];
-        List<String> patterns = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
+        String pattern = args[1];
 
         List<String> lines = readTextFileByLines(filename);
         if (lines == null) {
             return;
         }
 
-        AtomicInteger[] failCounts = new AtomicInteger[patterns.size()];
-        for (int i = 0; i < patterns.size(); i++) {
-            failCounts[i] = new AtomicInteger(0);
-        }
+        AtomicInteger failCount = new AtomicInteger(0);
+        AtomicInteger currentIndex = new AtomicInteger(0);
 
-        Thread[] threads = new Thread[patterns.size()];
-        Semaphore[] semaphores = new Semaphore[patterns.size() + 1];
+        ThreadData threadData = new ThreadData(lines, pattern, failCount, currentIndex);
 
-        for (int i = 0; i <= patterns.size(); i++) {
-            semaphores[i] = new Semaphore(0);  // 初始化信号量
-        }
+        int numThreads = 128; // 可以根据需要调整线程数
+        Thread[] threads = new Thread[numThreads];
 
-        // 第一个信号量设置为1，启动第一个线程
-        semaphores[0].release();
-
-        ThreadData[] threadData = new ThreadData[patterns.size()];
-        for (int i = 0; i < patterns.size(); i++) {
-            threadData[i] = new ThreadData(lines, patterns.get(i), failCounts[i], semaphores[i], semaphores[i + 1]);
-        }
-
-        // 创建线程
-        for (int i = 0; i < patterns.size(); i++) {
-            threads[i] = new Thread(new SearchInThread(threadData[i]));
+        // 创建并启动线程
+        for (int i = 0; i < numThreads; i++) {
+            threads[i] = new Thread(new SearchInThread(threadData));
             threads[i].start();
         }
 
         // 等待所有线程完成
-        for (int i = 0; i < patterns.size(); i++) {
+        for (int i = 0; i < numThreads; i++) {
             try {
                 threads[i].join();
             } catch (InterruptedException e) {
@@ -191,7 +163,8 @@ public class KMPPatternSearch {
             }
         }
 
-        // 清理资源
-        // 在Java中，Semaphore不需要显式销毁
+        if (failCount.get() == lines.size()) {
+            System.out.println("404 Text Not Found for pattern: " + pattern);
+        }
     }
 }

@@ -196,9 +196,8 @@ Nous parcourons ensuite l'ensemble du texte et les quatre correspondances suivan
     Ce cas signifie que le texte ne correspond pas et que nous devons effectuer un saut de correspondance correspondant sur la base du tableau CarryOver au lieu de simplement reléguer j à 0. C'est ce qui rend l'algorithme KMP si efficace. Je mets ici j à CarryOver[j].
     \item [$\bullet$] j = M
     \\
-    Cela signifie que nous avons terminé un match. Il suffit de sortir le contenu de la ligne où se trouve le texte, puis de mettre j à CarryOver[j] et d'ajouter i à un. 
-    \\
-    La raison pour laquelle la valeur de j est toujours fixée à CarryOver[j] est que le texte peut survivre à des correspondances répétées. En supposant que le P que nous devons faire correspondre est "mama" et que le texte est "mamama", l'avantage d'utiliser CarryOver[j] au lieu de 0 est que nous ne manquerons pas le deuxième "mama".
+    Cela signifie que nous avons terminé un match. Il suffit de sortir le contenu de la ligne où se trouve le texte, puis de mettre j à 0 et break. 
+
 \end{itemize}
 
 \indent L'algorithme de cette partie est mis en œuvre comme suit :
@@ -219,17 +218,13 @@ Nous parcourons ensuite l'ensemble du texte et les quatre correspondances suivan
 
         computeCarryOver
 
-        j $\leftarrow$ 0
-
-        i $\leftarrow$ 0
+        j $\leftarrow$ 0; i $\leftarrow$ 0
 
         \While{i $<$ N}
         {
             \If{j = -1 $||$ Text[i]=P[j]}
             {
-               i++
-
-               j++
+               i++; j++
             }
             \Else
             {
@@ -240,7 +235,9 @@ Nous parcourons ensuite l'ensemble du texte et les quatre correspondances suivan
             {
                 Print(LineNumber et Text a ce ligne)
                 
-                j $\leftarrow$ CarryOver[j]
+                j $\leftarrow$ 0
+
+                break;
             }
         }
 
@@ -259,7 +256,70 @@ La complexité temporelle de l'ensemble de l'algorithme KMP est O(M+N). J'ai dé
 
 \section{Comparaison des performances}
 
+\indent
+
+Les conditions de l'équipement utilisé pour les tests étaient les suivantes :
+
+\begin{itemize}
+    \item [$\bullet$]   cpu     :   Intel i7 13650H
+    \item [$\bullet$]   Ubuntu  :   24.04
+    \item [$\bullet$]   RAM     :   16G 4800MHz
+    \item [$\bullet$]   Java    :   Java 17
+\end{itemize}
+
+\subsection{Comparaison avec Mot}
+
+\indent
+
+Nous avons comparé les deux scénarios.
+Dans le premier cas, nous avons cherché des mots sans possibilité de bifurcation, comme "Sargon".
+
+\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[height=7cm]{./src/Compare1.png}
+    \end{center}
+\end{figure}
+
+\pagebreak
+
+\subsection{Comparaison Regex et Mot}
+
+\indent 
+
+Par ailleurs, Egrep effectue une recherche à l'aide de l'expression régulière "S(a$|$r$|$g)+on", alors que KMP, en raison de limitations algorithmiques, recherche toujours “Sargon”.
+
+\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[height=7cm]{./src/Compare2.png}
+    \end{center}
+\end{figure}
+
+
+
+\section{Optimisation}
+
+\indent
+
+Nous avons procédé à quelques optimisations de l'algorithme KMP. Normalement, l'algorithme KMP doit lire le texte ligne par ligne avant d'effectuer la recherche. Après l'optimisation, nous utiliserons plusieurs threads pour effectuer la recherche. Voici une comparaison du nombre de threads et du temps passé, pour un texte de 50M.
+
+\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[height=7cm]{./src/Compare3.png}
+    \end{center}
+\end{figure}
+
+\pagebreak
+
+\indent On peut constater que le multithreading a un certain degré d'effet d'optimisation sur l'utilisation de l'algorithme KMP, mais il n'est pas évident, car le multithreading ne modifie pas la complexité temporelle de l'algorithme, mais accélère seulement la traversée du texte dans une certaine mesure.
+
 \section{Conclusion}
 
+\indent
+
+D'après le tableau comparatif, nous pouvons constater que lors de l'utilisation de mots fixes tels que « Sargon », l'algorithme Egrep rencontrera son cas optimal, dans lequel les algorithmes Egrep et KMP ont la même complexité temporelle O(M+N). Dans ce cas, Egrep et KMP ont la même complexité en temps de O(M+N). Une fois qu'Egrep correspond à des expressions régulières relativement complexes, sa complexité en temps dans le pire des cas sera de O(2$^{n}$). En raison de la limitation de la taille du texte, le graphique linéaire ne peut pas bien montrer la courbe de changement.
+
+\indent En ce qui concerne l'optimisation, nous n'avons pas trouvé de bonne solution d'optimisation algorithmique, nous avons donc choisi d'utiliser le multithreading, ce qui était aussi un bon moyen de réviser ce que nous avons appris l'année dernière.
+
+\indent En résumé, le projet a mis en œuvre deux algorithmes classiques de recherche de motifs tout en explorant leurs forces et leurs limites dans différentes situations. Nous avons atteint l'objectif initial du projet en proposant un clone performant d'egrep, tout en explorant la solution algorithmique KMP et son optimisation.
 
 \end{document}

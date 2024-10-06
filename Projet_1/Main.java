@@ -41,16 +41,12 @@ public class Main {
                 }   
 
                 case 2 -> {
-                    System.out.println("Please enter the number of text : ");
-                    int number = sc.nextInt();
-                    sc.skip("\n");
-                    String[] patterns = new String[number + 1];
-                    System.out.println("Please enter the text(s) : ");
-                    for (int i = 1; i < number + 1; i++)
-                    {
-                        String pattern = sc.nextLine();
-                        patterns[i] = pattern;
-                    }
+                    String[] patterns = new String[2];
+                    System.out.println("Please enter the text : ");
+                    
+                    String pattern = sc.nextLine();
+                    patterns[1] = pattern;
+                    
                     System.out.println("Please enter the filename : ");
                     String filename = sc.nextLine();
                     patterns[0] = filename;
