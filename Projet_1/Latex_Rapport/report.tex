@@ -120,11 +120,96 @@ Classe NFA contient les états de départ et de fin de l'automate.
 Classe DFA est responsable de la conversion du NFA en DFA, ainsi que de la recherche dans le texte.
 
 \indent Pour classe DFAState, chaque état du DFA possède des transitions déterministes basées sur un seul caractère et indique si l'état est un état acceptant (fin de motif).
+
+
+
 \section{Aho-Ullman}
 
 \indent
 
-\textbf{KFC Crazy Thursday V Me 50€ !}
+L'algorithme de conversion NFA en DFA, tel que décrit par Aho et Ullman dans leur ouvrage, constitue l'un des piliers fondamentaux de notre projet. Cet algorithme est crucial pour optimiser la recherche de motifs complexes dans les fichiers texte en transformant des expressions régulières en automates. Nous détaillerons ici les principales étapes de l'algorithme et analyserons la complexité temporelle de chaque étape, ainsi que son comportement dans les cas optimaux et pessimistes.
+
+\subsection{Conversion d'une expression régulière en NFA}
+
+L'algorithme commence par la conversion d'une expression régulière en un automate fini non déterministe (NFA). Cette étape est relativement simple et suit des règles déterministes :
+
+- Chaque caractère ou élément de l'expression régulière (comme `a`, `b`, etc.) est représenté par un état du NFA.
+- Les opérateurs réguliers comme l'alternance (`|`), l'étoile (`*`), et la concaténation sont gérés en ajoutant de nouveaux états et transitions au NFA. Par exemple :
+    - L'opérateur `|` crée deux chemins parallèles à partir d'un même état initial.
+    - L'opérateur `*` permet de retourner à un état précédent ou d'avancer sans lire de caractère.
+    - La concaténation relie deux états de manière séquentielle.
+  
+La complexité de cette phase est proportionnelle à la taille de l'expression régulière, soit \textbf{O(k)}, où $k$ est la longueur de l'expression régulière. À ce stade, le nombre d'états est contrôlé et reste relativement petit, car les NFA gèrent plusieurs transitions depuis un même état.
+
+\subsection{Conversion du NFA en DFA}
+
+La partie la plus coûteuse de l'algorithme est la conversion du NFA en un DFA à l'aide de l'algorithme de construction de sous-ensembles. Chaque état du DFA représente un ensemble d'états du NFA, et la transition d'un état à un autre dans le DFA correspond à des transitions multiples dans le NFA.
+
+Cette phase suit les étapes suivantes :
+- **Fermeture epsilon** : Pour chaque état du NFA, on calcule la fermeture epsilon (`ε-closure`), c'est-à-dire l'ensemble des états accessibles sans lire de caractère (via des transitions epsilon). Cela permet de définir des états déterministes dans le DFA.
+- **Détermination des transitions** : Pour chaque symbole de l'alphabet, on calcule les transitions possibles à partir des états actuels du NFA et on les regroupe pour former un état unique dans le DFA.
+- **Ajout des états et transitions au DFA** : Si un nouvel ensemble d'états est trouvé (un ensemble non encore exploré), il est ajouté au DFA avec les transitions correspondantes.
+
+La complexité de cette conversion dépend du nombre d'états du NFA. Dans le pire des cas, un NFA avec $n$ états peut générer un DFA avec jusqu'à $2^n$ états, ce qui correspond à une complexité exponentielle \textbf{O(2$^n$)}. Cependant, dans de nombreux cas pratiques, la taille réelle du DFA est bien inférieure à cette limite théorique, car beaucoup d'états potentiels ne sont jamais générés ou explorés.
+
+\begin{algorithm}[htbp]
+    \SetAlFnt{\footnotesize\sf}
+    \SetKwInOut{Input}{inputs}
+    \SetKwInOut{Output}{outputs}
+    \SetAlgoProcName{Nom}{ConvertNFAtoDFA}
+
+    \caption{ConvertNFAtoDFA}
+    
+    \Input{ $NFA$, $StartState$ }
+    \Output{ DFA correspondant au $NFA$ }
+    \Begin
+    {
+        DFAState $\leftarrow$ EpsilonClosure(StartState) \\
+        Init DFA avec DFAState comme état de départ \\
+        
+        \While{DFAState non exploré}
+        {
+            \ForEach{symbole du NFA}
+            {
+                NextStates $\leftarrow$ Move(DFAState, symbole) \\
+                DFAState' $\leftarrow$ EpsilonClosure(NextStates) \\
+                
+                \If{DFAState' n'existe pas}
+                {
+                    Ajouter DFAState' au DFA \\
+                }
+                Ajouter transition de DFAState vers DFAState' sur symbole \\
+            }
+        }
+    }
+\end{algorithm}
+
+\subsection{Recherche dans le texte avec le DFA}
+
+Une fois le DFA construit, la recherche dans le texte devient très efficace. Le DFA permet de traiter chaque caractère du texte en temps constant, car chaque état du DFA a une transition unique pour chaque symbole de l'alphabet.
+
+Ainsi, la recherche de motifs dans un texte de longueur $m$ prend un temps linéaire, soit \textbf{O(m)}. Comme le DFA ne nécessite pas de revenir en arrière ou de considérer plusieurs chemins possibles, chaque caractère est traité une seule fois. Cela fait de l'approche DFA une méthode extrêmement rapide pour la recherche une fois que l'automate est construit.
+
+\subsection{Analyse des Cas Optimaux et Pessimistes}
+
+\textbf{Cas optimal :}
+
+Dans le cas optimal, l'expression régulière est relativement simple, sans utilisation excessive d'opérateurs comme `|` ou `*`. Par exemple, une expression régulière comme `abc` ou même `a*b` génère un NFA avec peu d'états, et la conversion en DFA est rapide. Dans ce scénario, la complexité temporelle est linéaire par rapport à la taille de l'expression régulière, soit \textbf{O(k)} pour la construction du NFA et \textbf{O(m)} pour la recherche dans le texte. La taille du DFA reste petite, et la recherche est réalisée en temps linéaire.
+
+Le cas optimal se produit donc lorsque l'expression régulière ne génère pas un grand nombre d'états dans le NFA, et lorsque les transitions entre les états sont simples.
+
+\textbf{Cas pessimiste :}
+
+Dans le pire des cas, l'expression régulière contient de nombreux opérateurs `|`, `*`, et des parenthèses imbriquées, ce qui entraîne une explosion du nombre d'états dans le NFA. Par exemple, une expression comme `(a|b|c)*` génère un nombre important de combinaisons d'états dans le NFA, et la conversion en DFA peut entraîner une explosion exponentielle du nombre d'états.
+
+Dans ce cas, la complexité de la conversion NFA en DFA devient \textbf{O(2$^n$)}, où $n$ est le nombre d'états du NFA. Cela peut entraîner des temps de calcul très longs et une utilisation excessive de la mémoire. Cependant, une fois le DFA construit, la recherche dans le texte reste rapide, avec une complexité linéaire \textbf{O(m)}.
+
+Le cas pessimiste survient lorsque l'expression régulière est très complexe, impliquant de nombreuses alternatives et répétitions, ce qui fait croître de manière exponentielle la taille du DFA.
+
+\subsection{Conclusion pour Aho-Ullman}
+
+L'algorithme de conversion NFA en DFA, bien que potentiellement coûteux en temps et en espace dans le pire des cas, reste une méthode extrêmement efficace pour la recherche de motifs complexes une fois le DFA construit. Le DFA permet une recherche en temps constant pour chaque caractère du texte, rendant cette approche particulièrement adaptée aux recherches répétées dans de grands fichiers texte. Cependant, dans le cas où l'expression régulière est extrêmement complexe, il est important de prendre en compte les limites de cet algorithme en termes de mémoire et de temps de conversion.
+
 
 \section{KMP}
 
