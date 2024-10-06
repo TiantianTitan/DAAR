@@ -146,7 +146,7 @@ La complexité de cette phase est proportionnelle à la taille de l'expression r
 La partie la plus coûteuse de l'algorithme est la conversion du NFA en un DFA à l'aide de l'algorithme de construction de sous-ensembles. Chaque état du DFA représente un ensemble d'états du NFA, et la transition d'un état à un autre dans le DFA correspond à des transitions multiples dans le NFA.
 
 Cette phase suit les étapes suivantes :
-- **Fermeture epsilon** : Pour chaque état du NFA, on calcule la fermeture epsilon (`ε-closure`), c'est-à-dire l'ensemble des états accessibles sans lire de caractère (via des transitions epsilon). Cela permet de définir des états déterministes dans le DFA.
+- **Fermeture epsilon** : Pour chaque état du NFA, on calcule la fermeture epsilon (`$\varepsilon $-closure`), c'est-à-dire l'ensemble des états accessibles sans lire de caractère (via des transitions epsilon). Cela permet de définir des états déterministes dans le DFA.
 - **Détermination des transitions** : Pour chaque symbole de l'alphabet, on calcule les transitions possibles à partir des états actuels du NFA et on les regroupe pour former un état unique dans le DFA.
 - **Ajout des états et transitions au DFA** : Si un nouvel ensemble d'états est trouvé (un ensemble non encore exploré), il est ajouté au DFA avec les transitions correspondantes.
 
