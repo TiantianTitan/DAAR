@@ -1,0 +1,31 @@
+/* components/Navbar.module.css */
+.navbar {
+    width: 100%;         /* 占据页面的整个宽度 */
+    background-color: #333;
+    padding: 1rem;
+    display: flex;       /* 使用 flexbox 布局 */
+    justify-content: center;  /* 居中导航栏内容 */
+    position: fixed;     /* 固定在页面顶部 */
+    top: 0;
+    left: 0;
+  }
+  
+  .navbar ul {
+    list-style-type: none;
+    display: flex;
+    gap: 2rem;           /* 设置菜单项之间的间距 */
+  }
+  
+  .navbar ul li {
+    display: inline;
+  }
+  
+  .navbar ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .navbar ul li a:hover {
+    text-decoration: underline;
+  }
+  

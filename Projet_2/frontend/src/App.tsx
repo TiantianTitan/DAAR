@@ -1,3 +1,12 @@
+// App.tsx
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { Navbar } from './components/Navbar'
+import { Shop } from './pages/Shop'
+import { Backpack } from './pages/Backpack'
+import { Mint } from './pages/Mint'
+import { Trade } from './pages/Trade'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './styles.module.css'
 import * as ethereum from '@/lib/ethereum'
@@ -40,10 +49,18 @@ const useWallet = () => {
 }
 
 export const App = () => {
-  const wallet = useWallet()
   return (
-    <div className={styles.body}>
-      <h1>Welcome to Pokémon TCG</h1>
-    </div>
+    <Router>
+      <div className={styles.body}>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<h1>欢迎来到 Pokémon TCG</h1>} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/backpack" element={<Backpack />} />
+          <Route path="/mint" element={<Mint />} />
+          <Route path="/trade" element={<Trade />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }

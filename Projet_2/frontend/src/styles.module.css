@@ -12,6 +12,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px;
+  padding-top: 60px;  /* 确保内容不会被固定导航栏覆盖 */
 }
 
 .grid {
