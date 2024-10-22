@@ -49,14 +49,21 @@ const useWallet = () => {
 }
 
 export const App = () => {
+  const [refreshTrigger, setRefreshTrigger] = useState(false)
+
+  // 当商城购买成功时，切换 refreshTrigger 来触发背包刷新
+  const handlePurchaseSuccess = () => {
+    setRefreshTrigger(!refreshTrigger)  // 切换状态来触发背包刷新
+  }
+
   return (
     <Router>
       <div className={styles.body}>
         <Navbar />
         <Routes>
           <Route path="/" element={<h1>欢迎来到 Pokémon TCG</h1>} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/backpack" element={<Backpack />} />
+          <Route path="/shop" element={<Shop onPurchaseSuccess={handlePurchaseSuccess} />} />
+          <Route path="/backpack" element={<Backpack refreshTrigger={refreshTrigger} />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="/trade" element={<Trade />} />
         </Routes>
