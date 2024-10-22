@@ -1,40 +1,92 @@
-// Shop.tsx
-import React, { useState } from 'react'
-import { ethers } from 'ethers'
-import CollectionAbi from '../abis/Collection.json'
-import styles from './Shop.module.css'
+import React, { useEffect, useState } from 'react';
+import { ethers } from 'ethers';
+import CollectionAbi from '../abis/Collection.json';  // 引入你的合约ABI
+import styles from './Shop.module.css';
 
-export const Shop = ({ onPurchaseSuccess }: { onPurchaseSuccess: () => void }) => {
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false)
+interface Card {
+  tokenId: number;
+  uri: string;
+  price: string;
+}
 
-  const buyCardPack = async () => {
-    if (!window.ethereum) return alert('请安装MetaMask')
+interface ShopProps {
+  onPurchaseSuccess: () => void;
+}
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
+export const Shop: React.FC<ShopProps> = ({ onPurchaseSuccess }) => {
+  const [cards, setCards] = useState<Card[]>([]);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // 替换为你的 Collection 合约地址
-    const collectionContractAddress = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
-    const collectionContract = new ethers.Contract(collectionContractAddress, CollectionAbi, signer)
-
+  // 获取可供出售的卡牌
+  const fetchForSaleCards = async () => {
     try {
-      // 假设每个卡包的价格是 0.05 ETH
-      const tx = await collectionContract.mintCard(await signer.getAddress(), "your-token-uri", { value: ethers.utils.parseEther("0.05") })
-      await tx.wait()
-      setPurchaseSuccess(true)
-      onPurchaseSuccess()  // 触发背包刷新
-    } catch (error) {
-      console.error('购买卡牌包失败:', error)
-      alert('购买卡牌包失败，请重试')
+      if (!window.ethereum) throw new Error('MetaMask 未安装');
+  
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const collectionContractAddress = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'; // 替换为你的合约地址
+      const collectionContract = new ethers.Contract(collectionContractAddress, CollectionAbi, signer);
+  
+      const forSaleCards = await collectionContract.getForSaleCards();
+      console.log("Fetched cards: ", forSaleCards); // 调试输出卡牌信息
+      setCards(forSaleCards);
+    } catch (error: any) {
+      console.error('获取卡牌失败:', error);
+      setErrorMessage('获取卡牌失败，请重试');
     }
-  }
+  };
+  
+
+  // 购买卡牌
+  const buyCard = async (tokenId: number, price: string) => {
+    try {
+      if (!window.ethereum) throw new Error('MetaMask 未安装');
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      const collectionContractAddress = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'; // 替换为你的合约地址
+      const collectionContract = new ethers.Contract(collectionContractAddress, CollectionAbi, signer);
+
+      const tx = await collectionContract.buyCard(tokenId, {
+        value: ethers.utils.parseEther(price),  // 支付相应的价格
+      });
+      await tx.wait();
+
+      setPurchaseSuccess(true);
+      onPurchaseSuccess();  // 触发父组件的回调，更新状态
+    } catch (error: any) {
+      console.error('购买失败:', error);
+      setErrorMessage('购买失败，请重试');
+    }
+  };
+
+  useEffect(() => {
+    fetchForSaleCards();  // 加载可供购买的卡牌
+  }, []);
 
   return (
     <div className={styles.container}>
-      <h2>购买卡牌包</h2>
-      <p>每个卡牌包售价：0.05 ETH</p>
-      <button onClick={buyCardPack}>购买卡牌包</button>
-      {purchaseSuccess && <p>购买成功！请前往背包查看你的新卡牌。</p>}
+      <h2>商店</h2>
+      {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+      {purchaseSuccess && <p>购买成功！</p>}
+      {cards.length > 0 ? (
+        <div className={styles.cardsGrid}>
+          {cards.map((card, index) => (
+            <div key={index} className={styles.card}>
+              <img src={card.uri} alt={`Card ${card.tokenId}`} className={styles.cardImage} />
+              <div className={styles.cardContent}>
+                <h3>卡牌 {card.tokenId}</h3>
+                <p>价格: {ethers.utils.formatEther(card.price)} ETH</p>
+                <button onClick={() => buyCard(card.tokenId, card.price)}>购买</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>没有可供出售的卡牌。</p>
+      )}
     </div>
-  )
-}
+  );
+};

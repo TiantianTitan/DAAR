@@ -1,5 +1,3 @@
-import "./Deed.sol"; 
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
@@ -11,6 +9,15 @@ contract Collection is ERC721URIStorage {
     address public owner;
     uint256 public pricePerPack;
 
+    struct Card {
+        uint256 tokenId;
+        string uri;
+        uint256 price;
+        bool isForSale;
+    }
+
+    mapping(uint256 => Card) public cards;
+
     constructor(string memory _name, uint256 _pricePerPack) ERC721(_name, "CCG") {
         name = _name;
         owner = msg.sender;
@@ -21,31 +28,57 @@ contract Collection is ERC721URIStorage {
         require(msg.value >= pricePerPack, "Insufficient funds to buy card pack");
         _safeMint(to, nextTokenId);
         _setTokenURI(nextTokenId, tokenURI);
+
+        cards[nextTokenId] = Card(nextTokenId, tokenURI, pricePerPack, true); // 记录卡牌信息
         nextTokenId++;
+        
         // 把支付的资金转给合约所有者
         payable(owner).transfer(msg.value);
     }
 
-    function setPrice(uint256 newPrice) public {
-        require(msg.sender == owner, "Only owner can set price");
-        pricePerPack = newPrice;
+    function setCardForSale(uint256 tokenId, uint256 price) public {
+        require(msg.sender == ownerOf(tokenId), "You are not the owner of this card");
+        cards[tokenId].isForSale = true;
+        cards[tokenId].price = price;
     }
 
-    // 获取某个用户拥有的所有tokenURIs
-    function getUserTokens(address user) public view returns (string[] memory) {
-      uint256 balance = balanceOf(user);
-      string[] memory tokenURIs = new string[](balance);
-      
-      for (uint256 i = 0; i < balance; i++) {
-        uint256 tokenId = tokenOfOwnerByIndex(user, i);
-        tokenURIs[i] = tokenURI(tokenId);
-      }
-      
-      return tokenURIs;
+
+
+mapping(uint256 => Card) public cards;
+uint256 public totalCards;
+
+function getForSaleCards() public view returns (Card[] memory) {
+    uint256 forSaleCount = 0;
+
+    for (uint256 i = 0; i < totalCards; i++) {
+        if (cards[i].isForSale) {
+            forSaleCount++;
+        }
     }
 
+    Card[] memory forSaleCards = new Card[](forSaleCount);
+    uint256 index = 0;
+
+    for (uint256 i = 0; i < totalCards; i++) {
+        if (cards[i].isForSale) {
+            forSaleCards[index] = cards[i];
+            index++;
+        }
+    }
+
+    return forSaleCards;
 }
 
 
+    // 购买卡牌
+    function buyCard(uint256 tokenId) public payable {
+        require(cards[tokenId].isForSale, "This card is not for sale");
+        require(msg.value >= cards[tokenId].price, "Not enough ETH to purchase");
 
+        address cardOwner = ownerOf(tokenId);
+        _transfer(cardOwner, msg.sender, tokenId);
+        payable(cardOwner).transfer(msg.value);
 
+        cards[tokenId].isForSale = false; // 从出售列表中移除
+    }
+}

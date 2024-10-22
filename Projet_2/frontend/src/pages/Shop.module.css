@@ -1,28 +1,25 @@
 .container {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .button {
-    background-color: #4CAF50; /* 绿色 */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .button:hover {
-    background-color: #45a049;
-  }
-  
-  p {
-    font-size: 18px;
-    color: #333;
-  }
-  
+  padding: 20px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.cardImage {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+}
+
+.error {
+  color: red;
+}
