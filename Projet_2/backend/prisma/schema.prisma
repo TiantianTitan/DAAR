@@ -1,14 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model Product {
+  id         Int      @id @default(autoincrement())
+  productType String   // 商品种类：'卡片' 或 '卡包'
+  productId   String   // 卡片或卡包的ID
+  name        String   // 卡片名称
+  price       Float    // 卡片价格
+  stock       Int      // 库存
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
