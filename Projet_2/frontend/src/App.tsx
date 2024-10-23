@@ -1,19 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import { Navbar } from './components/Navbar';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Shop } from './pages/Shop';
 import { Backpack } from './pages/Backpack';
 import { Mint } from './pages/Mint';
 import { Trade } from './pages/Trade';
 import {MainLayout} from './Layouts/MainLayout';
+import {ShopLayout} from './Layouts/ShopLayout';
+import {MintLayout} from './Layouts/MintLayout';
+import {BackPackLayout} from './Layouts/BackPackLayout';
+import {TradeLayout} from './Layouts/TradeLayout';
+
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import styles from './styles.module.css';
 import * as ethereum from '@/lib/ethereum';
 import * as main from '@/lib/main';
 
-import logo from './Img_src/Logo.png';
-import pokemonBall from './Img_src/PokemonBall.png';
 
 type Canceler = () => void;
 const useAffect = (
@@ -56,14 +57,15 @@ export const App = () => {
 
   return (
       <Router>
-            <MainLayout>
-              <Routes>
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/backpack" element={<Backpack />} />
-                <Route path="/mint" element={<Mint />} />
-                <Route path="/trade" element={<Trade />} />
-              </Routes>
-            </MainLayout>
+
+          <Routes>
+            <Route path="/" element={ <MainLayout>   </MainLayout>} />
+            <Route path="/shop" element={<ShopLayout> < Shop /> </ShopLayout>} />
+            <Route path="/backpack" element={<BackPackLayout> <Backpack /> </BackPackLayout>} />
+            <Route path="/mint" element={<MintLayout> <Mint /> </MintLayout>} />
+            <Route path="/trade" element={<TradeLayout><Trade /> </TradeLayout>} />
+          </Routes>
+
       </Router>
   );
 };

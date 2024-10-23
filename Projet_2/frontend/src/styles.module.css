@@ -19,6 +19,7 @@ body {
   background-position: center; /* 背景图居中 */
   min-height: 100vh; /* 确保容器最小高度为视口高度 */
   position: relative;
+  cursor: url("./Img_src/PokemonBall.png"), auto;
 }
 
 
@@ -79,3 +80,5 @@ body {
   cursor: pointer; /* 鼠标悬停时显示为点击指针 */
   z-index: 1000;
 }
+
+

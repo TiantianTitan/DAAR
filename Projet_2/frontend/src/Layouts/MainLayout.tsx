@@ -1,13 +1,12 @@
-// layouts/Layout.tsx
+// layouts/MainLayout.tsx
 import React, { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import styles from '../styles.module.css';
 import logo from '../Img_src/Logo.png';
-import pokemonBall from '../Img_src/PokemonBall.png';
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const [isFullyVisible, setIsFullyVisible] = useState(false);
-    const [isNavbarVisible, setIsNavbarVisible] = useState(false);
+
 
     useEffect(() => {
         const fadeInTimer = setTimeout(() => {
@@ -29,20 +28,10 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
-    const toggleNavbar = () => {
-        setIsNavbarVisible(prevState => !prevState);
-    };
 
     return (
         <div className={styles.body}>
-            <img
-                src={pokemonBall}
-                alt="PokemonBall"
-                className={styles.pokemonBall}
-                onClick={toggleNavbar}
-            />
-
-            {isNavbarVisible && <Navbar />}
+            <Navbar />
 
             <img
                 src={logo}

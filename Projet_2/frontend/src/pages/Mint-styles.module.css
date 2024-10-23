@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    /* 确保内容不会被固定导航栏覆盖 */
+    padding: 60px 12px 12px;
+    background-image: url('../Img_src/Mint.webp'); /* 根据 Img_src 文件夹的位置设置路径 */
+    background-size: cover; /* 使背景图覆盖整个容器 */
+    background-repeat: no-repeat; /* 不重复背景图 */
+    background-position: center; /* 背景图居中 */
+    min-height: 100vh; /* 确保容器最小高度为视口高度 */
+    position: relative;
+
+}
+
+
+
+.logo {
+    max-width: 150px;
+    transition: opacity 2s ease; /* 控制透明度的过渡时间 */
+    position: fixed; /* 固定在页面右上角 */
+    top: 20px;
+    right: 10px;
+    animation: spin 3s linear 1; /* 旋转两圈后停止 */
+}
+
+.stopFlipping {
+    animation: none;
+}
+
+@keyframes spin {
+    from {
+        transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+
+
+.grid {
+    display: grid;
+    gap: 1px;
+    margin: 0 auto;
+}
+
+.cell {
+    background: #ddd;
+}
+
+
+
+
