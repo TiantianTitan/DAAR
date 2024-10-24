@@ -10,16 +10,16 @@ export const Navbar = () => {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/shop">商城</Link>
+          <Link to="/shop">Shop</Link>
         </li>
         <li>
-          <Link to="/backpack">背包</Link>
+          <Link to="/backpack">BackPack</Link>
         </li>
         <li>
-          <Link to="/mint">铸造</Link>
+          <Link to="/mint">Mint</Link>
         </li>
         <li>
-          <Link to="/trade">交易</Link>
+          <Link to="/trade">Trade</Link>
         </li>
       </ul>
     </nav>

@@ -31,6 +31,7 @@ export const Backpack = ({ refreshTrigger }: { refreshTrigger: boolean }) => {
   }, [refreshTrigger])  // 当 refreshTrigger 改变时重新调用 useEffect
 
   return (
+
     <div className={styles.container}>
       <h2>你的背包</h2>
       {cards.length > 0 ? (
@@ -44,6 +45,7 @@ export const Backpack = ({ refreshTrigger }: { refreshTrigger: boolean }) => {
       ) : (
         <p>你还没有任何卡牌</p>
       )}
+
     </div>
   )
 }
