@@ -70,7 +70,7 @@ export const App = () => {
 
           <Routes>
             <Route path="/" element={ <MainLayout>   </MainLayout>} />
-            <Route path="/shop" element={<ShopLayout> <Shop onPurchaseSuccess={handlePurchaseSuccess} /> </ShopLayout>} />
+            <Route path="/shop" element={<ShopLayout> <Shop /*onPurchaseSuccess={handlePurchaseSuccess}*/ /> </ShopLayout>} />
             <Route path="/backpack" element={<BackPackLayout> <Backpack refreshTrigger={refreshTrigger} /> </BackPackLayout>} />
             <Route path="/mint" element={<MintLayout> <Mint /> </MintLayout>} />
             <Route path="/trade" element={<TradeLayout><Trade /> </TradeLayout>} />
@@ -80,5 +80,5 @@ export const App = () => {
   );
 };
 
-}
+
 
