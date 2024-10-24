@@ -23,7 +23,7 @@
 }
 
 .navbar ul li a {
-    color: white;
+    color: black;
     text-decoration: none;
     padding: 0.5rem 1rem;    /* 添加内边距，使背景色矩形可见 */
     background-color: rgba(255, 255, 255, 0.3); /* 常态时降低透明度的白色背景 */
