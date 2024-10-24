@@ -53,6 +53,16 @@ const useWallet = () => {
 };
 
 export const App = () => {
+  
+    const [refreshTrigger, setRefreshTrigger] = useState(false)
+
+  // 当商城购买成功时，切换 refreshTrigger 来触发背包刷新
+  const handlePurchaseSuccess = () => {
+    setRefreshTrigger(!refreshTrigger)  // 切换状态来触发背包刷新
+  }
+
+  
+
 
 
   return (
@@ -60,8 +70,8 @@ export const App = () => {
 
           <Routes>
             <Route path="/" element={ <MainLayout>   </MainLayout>} />
-            <Route path="/shop" element={<ShopLayout> < Shop /> </ShopLayout>} />
-            <Route path="/backpack" element={<BackPackLayout> <Backpack /> </BackPackLayout>} />
+            <Route path="/shop" element={<ShopLayout> <Shop onPurchaseSuccess={handlePurchaseSuccess} /> </ShopLayout>} />
+            <Route path="/backpack" element={<BackPackLayout> <Backpack refreshTrigger={refreshTrigger} /> </BackPackLayout>} />
             <Route path="/mint" element={<MintLayout> <Mint /> </MintLayout>} />
             <Route path="/trade" element={<TradeLayout><Trade /> </TradeLayout>} />
           </Routes>
@@ -69,3 +79,6 @@ export const App = () => {
       </Router>
   );
 };
+
+}
+

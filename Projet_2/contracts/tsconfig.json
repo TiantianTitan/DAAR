@@ -23,6 +23,14 @@
       "$/*": ["../typechain/src/*"]
     }
   },
-  "include": ["./test", "./src", "./lib", "./hardhat.config.ts", "./deploy"],
+  "include": [
+    "./test",
+    "./scripts",        // Inclure les scripts de déploiement
+    "./src", 
+    "./lib", 
+    "./hardhat.config.ts", 
+    "./deploy"
+  ],
+  "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"]
 }
