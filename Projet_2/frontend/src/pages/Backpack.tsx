@@ -52,36 +52,60 @@ export const Backpack = ({ refreshTrigger }: { refreshTrigger: boolean }) => {
 */
 
 import React, { useState, useEffect } from 'react';
-import styles from "./Backpack-styles.module.css"
+import styles from "./Backpack-styles.module.css";
 
 export const Backpack = () => {
-  const [cards, setCards] = useState<any[]>([]);
+    const [cards, setCards] = useState<any[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const cardsPerPage = 18; // 每页显示18张卡片（3行 * 6列）
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/cards')
-        .then(response => response.json())
-        .then(data => {
-          setCards(data.data);  // 获取 data 数组
-        })
-        .catch(error => {
-          console.error('Error fetching cards:', error);
-        });
-  }, []);
+    useEffect(() => {
+        fetch('http://localhost:5000/api/cards')
+            .then(response => response.json())
+            .then(data => {
+                setCards(data.data);  // 获取 data 数组
+            })
+            .catch(error => {
+                console.error('Error fetching cards:', error);
+            });
+    }, []);
 
-  return (
-      <div className={styles.container}>
-        <div className={styles.cardsGrid}>
-          {cards.length > 0 ? (
-              cards.map((card) => (
-                  <div className={styles.card} key={card.id}>
-                    <img src={card.images.small} alt={card.name} className={styles.cardImage}/>
+    // 计算当前页要显示的卡片
+    const indexOfLastCard = currentPage * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const currentCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
-                  </div>
-              ))
-          ) : (
-              <p>加载卡片中...</p>
-          )}
+    // 处理页码点击
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+    const totalPages = Math.ceil(cards.length / cardsPerPage);
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.cardsGrid}>
+                {currentCards.length > 0 ? (
+                    currentCards.map((card) => (
+                        <div className={styles.card} key={card.id}>
+                            <img src={card.images.small} alt={card.name} className={styles.cardImage}/>
+                        </div>
+                    ))
+                ) : (
+                    <p>加载卡片中...</p>
+                )}
+            </div>
+
+            {/* 页码 */}
+            <div className={styles.pagination}>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index + 1}
+                        onClick={() => paginate(index + 1)}
+                        className={currentPage === index + 1 ? styles.activePage : ''}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
         </div>
-      </div>
-  );
+    );
 };
