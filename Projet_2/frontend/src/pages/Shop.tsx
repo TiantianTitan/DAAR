@@ -18,7 +18,12 @@ export const Shop = () => {
         fetch('http://localhost:5000/api/cards')
             .then(response => response.json())
             .then(data => {
-                setCards(data.data);  // 设置卡片数据
+                // Ensure that the ID is correctly handled even if not a number
+                const cards = data.data.map((card: any, index: number) => ({
+                    ...card,
+                    id: index, // Use the index as a fallback if the card.id is not valid
+                }));
+                setCards(cards);  // 设置卡片数据
             })
             .catch(error => {
                 console.error('Error fetching cards:', error);
@@ -66,8 +71,14 @@ export const Shop = () => {
             const signer = provider.getSigner();
             const collectionContract = new ethers.Contract(collectionContractAddress, CollectionAbi, signer);
 
+            // Use tokenId as a number
+            const numericTokenId = parseInt(tokenId, 10);
+            if (isNaN(numericTokenId)) {
+                throw new Error(`Invalid tokenId: ${tokenId}`);
+            }
+
             // 发送购买卡片的交易
-            const tx = await collectionContract.buyCard(tokenId, {
+            const tx = await collectionContract.buyCard(numericTokenId, {
                 value: ethers.utils.parseEther(price),  // 支付的价格
                 gasLimit: ethers.utils.hexlify(300000)  // 设置 gas 限制
             });
@@ -98,7 +109,7 @@ export const Shop = () => {
                                 <h4>{card.name}</h4>
                                 <p>Token ID: {card.id}</p>
                                 <p>Price: 0.05 ETH</p> {/* 假设每张卡的价格为 0.05 ETH */}
-                                <button onClick={() => buyCard(card.id, '0.05')}>
+                                <button onClick={() => buyCard(card.id.toString(), '0.05')}>
                                     购买此卡片
                                 </button>
                             </div>
