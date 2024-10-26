@@ -2,7 +2,6 @@
   "name": "collectible-card-game-daar",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "repository": "git@github.com:ghivert/touche-coule.git",
   "author": "Guillaume Hivert <hivert.is.coming@gmail.com>",
   "license": "MIT",
