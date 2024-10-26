@@ -59,6 +59,10 @@ export const Shop = () => {
         }
     };
 
+    useEffect(() => {
+        connectMetaMask();
+    }, []);
+
     // 购买卡片函数
     const buyCard = async (tokenId: string, price: string) => {
         if (!window.ethereum) {
@@ -109,7 +113,7 @@ export const Shop = () => {
                                 <h4>{card.name}</h4>
                                 <p>Token ID: {card.id}</p>
                                 <p>Price: 0.05 ETH</p> {/* 假设每张卡的价格为 0.05 ETH */}
-                                <button onClick={() => buyCard(card.id.toString(), '0.05')}>
+                                <button onClick={() => buyCard(card.id.toString(), '0')}>
                                     购买此卡片
                                 </button>
                             </div>
