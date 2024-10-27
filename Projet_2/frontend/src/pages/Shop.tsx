@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import CollectionAbi from '../abis/Collection.json';
-import styles from './Shop.module.css';
+import styles from './Shop-styles.module.css';
+
+import boosterImg from '../Img_src/Booster.png'
+
+import BoosterAbi from '../abis/Booster.json';
 
 // 替换为你的 Collection 合约地址
-const collectionContractAddress = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
+const collectionContractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const boosterContractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
 export const Shop = () => {
     const [cards, setCards] = useState<any[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [purchaseSuccess, setPurchaseSuccess] = useState(false);
     const [currentPage, setCurrentPage] = useState(1); // 分页当前页
-    const cardsPerPage = 18; // 每页显示的卡片数量
+    const [displayType, setDisplayType] = useState<'cards' | 'booster'>('cards'); // 新增状态
+
+    const [selectedPage, setSelectedPage] = useState(1);
+    const cardsPerPage = 10;
 
     useEffect(() => {
         // 从你的服务器获取卡片数据
@@ -31,15 +39,38 @@ export const Shop = () => {
             });
     }, []);
 
-    // 计算当前页要显示的卡片
+
+
+
+
+
+
+    const totalPages = Math.ceil(cards.length / cardsPerPage);
+
     const indexOfLastCard = currentPage * cardsPerPage;
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
     const currentCards = cards.slice(indexOfFirstCard, indexOfLastCard);
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prev => prev - 1);
+            setSelectedPage(prev => prev - 1);
+        }
+    };
 
-    // 处理页码点击
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(prev => prev + 1);
+            setSelectedPage(prev => prev + 1);
+        }
+    };
 
-    const totalPages = Math.ceil(cards.length / cardsPerPage);
+    const handleJumpPage = () => {
+        setCurrentPage(selectedPage);
+    };
+
+    useEffect(() => {
+        setSelectedPage(currentPage);
+    }, [currentPage]);
 
     // 连接 MetaMask
     const connectMetaMask = async () => {
@@ -63,8 +94,7 @@ export const Shop = () => {
         connectMetaMask();
     }, []);
 
-    // 购买卡片函数
-    const buyCard = async (tokenId: string, price: string) => {
+    const buyCard = async (tokenURI: string) => {
         if (!window.ethereum) {
             setErrorMessage('请安装MetaMask');
             return;
@@ -75,21 +105,15 @@ export const Shop = () => {
             const signer = provider.getSigner();
             const collectionContract = new ethers.Contract(collectionContractAddress, CollectionAbi, signer);
 
-            // Use tokenId as a number
-            const numericTokenId = parseInt(tokenId, 10);
-            if (isNaN(numericTokenId)) {
-                throw new Error(`Invalid tokenId: ${tokenId}`);
-            }
-
             // 发送购买卡片的交易
-            const tx = await collectionContract.buyCard(numericTokenId, {
-                value: ethers.utils.parseEther(price),  // 支付的价格
+            const tx = await collectionContract.buyCard(tokenURI, {
+                value: ethers.utils.parseEther('0.05'),  // 支付的价格为 0.05 ETH
                 gasLimit: ethers.utils.hexlify(300000)  // 设置 gas 限制
             });
 
             await tx.wait();  // 等待交易被确认
 
-            console.log(`Card ${tokenId} purchased successfully!`);
+            console.log(`Card purchased successfully!`);
             setPurchaseSuccess(true);
         } catch (error) {
             console.error('购买卡牌失败:', error);
@@ -97,47 +121,89 @@ export const Shop = () => {
         }
     };
 
+
+    const buyBooster = async () => {
+        if (!window.ethereum) {
+            setErrorMessage('请安装MetaMask');
+            return;
+        }
+
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const boosterContract = new ethers.Contract(boosterContractAddress, BoosterAbi, signer);
+
+            // 获取 Booster 价格
+            const boosterPrice = await boosterContract.boosterPrice();
+
+            // 发送购买 Booster 的交易
+            const tx = await boosterContract.buyBooster({
+                value: boosterPrice,
+                gasLimit: ethers.utils.hexlify(300000)
+            });
+
+            await tx.wait();
+
+            console.log('Booster purchased successfully!');
+            setPurchaseSuccess(true);
+        } catch (error) {
+            console.error('购买Booster失败:', error);
+            setErrorMessage('购买Booster失败，请重试');
+        }
+    };
+
+
     return (
         <div className={styles.container}>
-            <h2>卡牌商店</h2>
-            <p>在这里购买卡片包或单独的卡片。</p>
-
-            {/* 单张卡片购买部分 */}
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-            <div className={styles.cardsGrid}>
-                {currentCards.length > 0 ? (
-                    currentCards.map((card) => (
-                        <div key={card.id} className={styles.card}>
-                            <img src={card.images.small} alt={card.name} className={styles.cardImage} />
-                            <div className={styles.cardContent}>
-                                <h4>{card.name}</h4>
-                                <p>Token ID: {card.id}</p>
-                                <p>Price: 0.05 ETH</p> {/* 假设每张卡的价格为 0.05 ETH */}
-                                <button onClick={() => buyCard(card.id.toString(), '0')}>
-                                    购买此卡片
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>加载卡片中...</p>
-                )}
-            </div>
 
-            {/* 页码 */}
-            <div className={styles.pagination}>
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index + 1}
-                        onClick={() => paginate(index + 1)}
-                        className={currentPage === index + 1 ? styles.activePage : ''}
+            {displayType === 'cards' ? (
+                <div className={styles.cardsGrid}>
+                    {currentCards.length > 0 ? (
+                        currentCards.map((card) => (
+                            <div key={card.id} className={styles.card}>
+                                <img src={card.images.small} alt={card.name} className={styles.cardImage}/>
+                                <div className={styles.cardContent}>
+                                    <button onClick={() => buyCard(card.images.small)}>
+                                        购买此卡牌
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>加载卡片中...</p>
+                    )}
+                </div>
+            ) : (
+                <div className={styles.booster}>
+                    <img src={boosterImg} alt="Booster" className={styles.boosterImage}/>
+                    <button onClick={() => buyBooster()}>购买Booster</button>
+                </div>
+            )}
+
+            <div className={styles.paginationSidebar}>
+                <button className={styles.arrowButton} onClick={handlePreviousPage}>▲</button>
+                <div className={styles.jumpContainer}>
+                    <select
+                        className={styles.jumpSelect}
+                        value={selectedPage}
+                        onChange={(e) => setSelectedPage(Number(e.target.value))}
                     >
-                        {index + 1}
-                    </button>
-                ))}
+                        {Array.from({length: totalPages}, (_, index) => (
+                            <option key={index + 1} value={index + 1}>{index + 1}</option>
+                        ))}
+                    </select>
+                    <button className={styles.jumpButton} onClick={handleJumpPage}>Jump</button>
+                </div>
+                <button className={styles.arrowButton} onClick={handleNextPage}>▼</button>
             </div>
 
             {purchaseSuccess && <p>购买成功！请刷新查看最新的卡片信息。</p>}
+
+            <div className={styles.switchButtons}>
+                <button onClick={() => setDisplayType('cards')}>Card</button>
+                <button onClick={() => setDisplayType('booster')}>Booster</button>
+            </div>
         </div>
     );
 };

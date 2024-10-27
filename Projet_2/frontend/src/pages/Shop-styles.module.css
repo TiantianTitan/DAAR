@@ -1,9 +1,11 @@
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
+    overflow: hidden;
 }
 
 .body {
@@ -11,24 +13,34 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    /* 确保内容不会被固定导航栏覆盖 */
     padding: 60px 12px 12px;
-    background-image: url('../Img_src/Shop.webp'); /* 设置背景图路径 */
-    background-size: cover; /* 背景图覆盖整个容器 */
-    background-repeat: no-repeat; /* 背景图不重复 */
+    background-image: url('../Img_src/Shop.webp'); /* 根据 Img_src 文件夹的位置设置路径 */
+    background-size: cover; /* 使背景图覆盖整个容器 */
+    background-repeat: no-repeat; /* 不重复背景图 */
     background-position: center; /* 背景图居中 */
-    background-attachment: fixed; /* 背景图片固定不动 */
+    background-attachment: fixed;
     min-height: 100vh; /* 确保容器最小高度为视口高度 */
     position: relative;
-    cursor: url("../Img_src/PokemonBall.png"), auto; /* 设置自定义光标 */
+
+}
+
+.container {
+    width: 100%;
+    height: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    align-items: center;
 }
 
 .logo {
-    max-width: 150px;
-    transition: opacity 2s ease;
-    position: fixed;
+    max-width: 12vw;
+    transition: opacity 2s ease; /* 控制透明度的过渡时间 */
+    position: fixed; /* 固定在页面右上角 */
     top: 20px;
     right: 10px;
-    animation: spin 3s linear 1;
+    animation: spin 3s linear 1; /* 旋转两圈后停止 */
 }
 
 .stopFlipping {
@@ -44,6 +56,8 @@ body {
     }
 }
 
+
+
 .grid {
     display: grid;
     gap: 1px;
@@ -54,78 +68,154 @@ body {
     background: #ddd;
 }
 
-.container {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .cardsGrid {
+.cardsGrid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
-  }
-  
-  .card {
+
+    width: 80vw;
+    height: 80vh;
+    margin: 5vh auto 0 auto;
+
+}
+
+.card {
     border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-    background-color: rgba(255, 255, 255, 0.8); /* 使用半透明白色背景 */
-    backdrop-filter: blur(5px);
+
     text-align: center;
-  }
-  
-  .card:hover {
-    transform: scale(1.1); /* 鼠标悬停时放大 */
-    z-index: 10;
-  }
-  
-  .cardImage {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-  
-  .cardContent {
+    transition: transform 0.2s;
+    background-color: rgba(255, 255, 255, 0.3); /* 常态时降低透明度的白色背景 */
+    backdrop-filter: blur(3px); /* 添加模糊效果 */
+    max-width: 12vw; /* 设置卡片的固定宽度，缩小卡片整体 */
+    height: auto; /* 设置卡片的固定高度 */
+    max-height: 35vh;
+    align-items: center;
+    justify-items: center;
+    padding-top: 10%;
+}
+
+.card:hover {
+    transform: scale(1.3);
+    z-index: 1000;
+}
+
+.cardImage {
+    width: 75%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.cardContent {
     margin-top: 10px;
-  }
-  
-  .cardContent h4 {
-    margin: 10px 0;
-  }
-  
-  .cardContent p {
+}
+
+.cardContent h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.cardContent p {
     margin: 5px 0;
-  }
-  
-  .pagination {
+}
+
+.paginationSidebar {
+    position: fixed;
+    right: 4vw; /* 右侧位置 */
+    top: 50%; /* 垂直居中 */
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vh;
+}
+
+.arrowButton {
+    width: 8vw;
+    height: 8vh;
     display: flex;
     justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .pagination button {
+    align-items: center;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(3px);
+    border: 0.3vh solid white;
+    cursor: pointer;
+    font-size: 5vh;
+    transition: background-color 0.3s ease;
+}
+
+.arrowButton:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.jumpContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.jumpSelect {
+    width: 5vw;
+    height: 4vh;
+    padding: 0.5vh;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1.5vh;
+    appearance: none; /* 隐藏默认的下拉箭头 */
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(3px);
+    cursor: pointer;
+}
+
+.jumpButton {
+    padding: 1vh 2vw;
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 15px;
-    margin: 0 5px;
-    cursor: pointer;
     border-radius: 5px;
+    cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .pagination button:hover {
+}
+
+.jumpButton:hover {
     background-color: #45a049;
-  }
-  
-  .activePage {
-    background-color: #333; /* 当前页码的背景色 */
-  }
-  
-  .error {
-    color: red;
-  }
-  
+}
+
+.switchButtons {
+    position: fixed;
+    bottom: 4vh;
+    right: 4vw;
+    display: flex;
+    gap: 10px;
+}
+
+.switchButtons button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.switchButtons button:hover {
+    background-color: #45a049;
+}
+
+.booster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.boosterImage {
+    width: 35%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

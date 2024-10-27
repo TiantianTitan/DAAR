@@ -18,8 +18,8 @@ contract Main {
     collections[count++] = new Collection(name, cardCount);
   }*/
 
-  function mintInCollection(int collectionId, address to, string calldata tokenURI) external {
+  /*function mintInCollection(int collectionId, address to, string calldata tokenURI) external {
     Collection collection = collections[collectionId];
     collection.mintCard(to, tokenURI);
-  }
+  }*/
 }
