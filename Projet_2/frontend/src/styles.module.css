@@ -67,9 +67,19 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%); /* 确保在页面正中间 */
-  width: 100%;
+  width: 80vw;
+  max-width: 100%;
   height: auto;
 }
+
+.videoWrapper iframe {
+  width: 60vw; /* 根据视口宽度调整 */
+  height: 33.75vw; /* 根据视口高度，确保16:9比例 */
+  max-width: 100%;
+  max-height: 100vh; /* 在较大屏幕下也不会超出视口 */
+  border: none;
+}
+
 
 .pokemonBall {
   position: fixed;

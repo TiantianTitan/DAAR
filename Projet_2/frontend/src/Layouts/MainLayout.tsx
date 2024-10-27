@@ -43,8 +43,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <div className={styles.videoWrapper}>
                 <iframe
                     id="youtubeVideo"
-                    width="560"
-                    height="315"
                     src="https://www.youtube.com/embed/GmE3uICi9oo"
                     title="YouTube video player"
                     frameBorder="0"

@@ -6,7 +6,7 @@ export const Backpack = () => {
     const [cards, setCards] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedPage, setSelectedPage] = useState(1);
-    const cardsPerPage = 18; // 每页显示18张卡片（3行 * 6列）
+    const cardsPerPage = 15; // 每页显示18张卡片（3行 * 6列）
 
     useEffect(() => {
         const storedCards = localStorage.getItem('cardsData'); // 先从localStorage中读取数据

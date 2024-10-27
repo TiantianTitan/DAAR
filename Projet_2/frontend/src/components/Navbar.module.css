@@ -8,6 +8,7 @@
     top: 25px;
     left: 0;
     background-color: transparent;
+
 }
 
 .navbar ul {
@@ -25,11 +26,13 @@
 .navbar ul li a {
     color: black;
     text-decoration: none;
-    padding: 0.5rem 1rem;    /* 添加内边距，使背景色矩形可见 */
+    padding: 2vh 4vw;    /* 添加内边距，使背景色矩形可见 */
     background-color: rgba(255, 255, 255, 0.3); /* 常态时降低透明度的白色背景 */
     backdrop-filter: blur(3px); /* 添加模糊效果 */
     border-radius: 10px;       /* 矩形，去掉圆角 */
     border: 2px solid white; /* 添加白色边框 */
+    font-size: clamp(1rem, 1vw, 2rem); /* 使用clamp函数自适应字体大小 */
+
 }
 
 
