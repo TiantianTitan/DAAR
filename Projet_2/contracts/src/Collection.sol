@@ -6,13 +6,13 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract Collection is ERC721URIStorage {
-    string public name;
+    string public name1;
     uint256 public nextTokenId;
     address public owner;
     uint256 public pricePerPack;
 
     constructor(string memory _name, uint256 _pricePerPack) ERC721(_name, "CCG") {
-        name = _name;
+        name1 = _name;
         owner = msg.sender;
         pricePerPack = _pricePerPack; // 设置每个卡包的价格
     }
@@ -32,7 +32,7 @@ contract Collection is ERC721URIStorage {
     }
 
     // 获取某个用户拥有的所有tokenURIs
-    function getUserTokens(address user) public view returns (string[] memory) {
+    /*function getUserTokens(address user) public view returns (string[] memory) {
       uint256 balance = balanceOf(user);
       string[] memory tokenURIs = new string[](balance);
       
@@ -42,7 +42,7 @@ contract Collection is ERC721URIStorage {
       }
       
       return tokenURIs;
-    }
+    }*/
 
 }
 

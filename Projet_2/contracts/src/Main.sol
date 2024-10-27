@@ -14,9 +14,9 @@ contract Main {
     count = 0;
   }
 
-  function createCollection(string calldata name, int cardCount) external {
+  /*function createCollection(string calldata name, int cardCount) external {
     collections[count++] = new Collection(name, cardCount);
-  }
+  }*/
 
   function mintInCollection(int collectionId, address to, string calldata tokenURI) external {
     Collection collection = collections[collectionId];
